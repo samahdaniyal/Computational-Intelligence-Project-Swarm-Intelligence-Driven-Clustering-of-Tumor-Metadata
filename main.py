@@ -50,46 +50,6 @@ def compare_methods(X, k, true_labels=None):
     return results, perf, labels, conv
 
 # main:
-# def main():
-#     path = r"C:\Users\samah\Downloads\biospecimen.project-cmi-asc.2025-04-09\sample.tsv"
-#     df = load_data(path)
-
-#     cat_cols = [
-#         'samples.biospecimen_anatomic_site',
-#         'samples.composition',
-#         'samples.tumor_descriptor'
-#     ]
-#     num_cols = []
-#     X, _, _ = preprocess_data(df, cat_cols, num_cols)
-#     k = 5
-
-#     results = {}
-#     for name, func in [
-#         ('kmeans', run_kmeans),
-#         ('hierarchical', run_hierarchical),
-#         ('pso', run_pso),
-#         ('aco', run_aco)
-#     ]:
-#         labels, ev = func(X, k)
-#         results[name] = ev
-#     print("Final results:", results)
-
-# if __name__ == '__main__':
-#     main()
-    
-# def main(path, cat_cols, num_cols, find_k=False):
-#     df=load_data(path)
-#     X,enc,scaler,_=preprocess_data(df,cat_cols,num_cols)
-#     if find_k: print(find_optimal_clusters(X))
-#     res,perf,labels,conv=compare_methods(X,5)
-#     print(res)
-#     plot_clustering_2d(X,labels)
-#     for name in conv: plot_convergence(conv[name],name)
-#     plot_cluster_centers_heatmap(X,labels)
-
-# if __name__=='__main__':
-#     main(r"CI Project\sample.tsv",['samples.biospecimen_anatomic_site', 'samples.composition','samples.tumor_descriptor'],[])
-    
 def main(path,cat_cols,num_cols,find_k=False):
     df=load_data(path)
     X,enc,scaler,_=preprocess_data(df,cat_cols,num_cols)
