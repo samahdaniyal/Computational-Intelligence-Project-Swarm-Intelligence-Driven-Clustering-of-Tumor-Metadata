@@ -74,6 +74,7 @@ def main(path, cat_cols, num_cols, find_k=False):
         if h: plot_convergence(h,name)
     plot_cluster_centers_heatmap(X,labels)
 
+
 if __name__ == '__main__':
     main(
         path=r"C:\Users\User\Documents\GitHub\CI Project\sample.tsv",

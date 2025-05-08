@@ -44,7 +44,8 @@ class PSOClustering:
         km = KMeans(n_clusters=self.k, init='k-means++', n_init=1).fit(self.X)
         seed = km.cluster_centers_.flatten()
         for i in range(min(n_particles, self.k)):
-            self.particles[i].position = seed.copy()
+            noise = np.random.normal(0, 0.01, seed.shape)
+            self.particles[i].position = np.clip(seed + noise, bounds[0], bounds[1])
 
     def optimize(self, patience= 20):
         history = []

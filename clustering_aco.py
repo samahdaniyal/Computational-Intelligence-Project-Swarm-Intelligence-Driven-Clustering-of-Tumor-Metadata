@@ -2,6 +2,7 @@ import numpy as np
 import random
 from evaluation import evaluate_clustering
 from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
 
 class Ant:
     def __init__(self, X, pher, alpha, beta, eta):
@@ -36,7 +37,8 @@ class AntColonyClustering:
         km = KMeans(n_clusters=self.k, init='k-means++', n_init=1).fit(self.X)
         centers = km.cluster_centers_
         distances = np.linalg.norm(self.X[:, None, :] - centers[None, :, :], axis=2)
-        self.eta = 1.0 / (distances + 1e-10)
+        # self.eta = 1.0 / (distances + 1e-10)
+        self.eta = np.exp(-distances / (np.std(distances) + 1e-5))
 
     def run(self):
         for it in range(self.iters):
@@ -59,9 +61,15 @@ class AntColonyClustering:
             self.pher *= (1 - self.rho)
             self.pher = np.clip(self.pher, 1e-6, 10.0)
 
-            # Elitist strategy: update only from best ant
-            for i, lab in enumerate(best_labels):
-                self.pher[i, lab] += self.Q / best_cost
+            # # Elitist strategy: update only from best ant
+            # for i, lab in enumerate(best_labels):
+            #     self.pher[i, lab] += self.Q / best_cost
+            top_ants = sorted(all_sols, key=lambda x: x[1])[:3]
+            self.Q = np.log(self.n_ants + 1)
+            for labels, cost in top_ants:
+                for i, lab in enumerate(labels):
+                    self.pher[i, lab] += self.Q / cost
+
 
             # Cluster-center repair: reassign empty clusters
             present_clusters = set(best_labels)
