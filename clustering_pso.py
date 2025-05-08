@@ -21,6 +21,7 @@ class Particle:
         social = c2 * r2 * (global_best - self.position)
         # clamp velocity
         v_max = 0.2 * (bounds[1] - bounds[0])
+        self.velocity = w * self.velocity + cognitive + social
         self.velocity = np.clip(self.velocity, -v_max, v_max)
         self.position = np.clip(self.position + self.velocity, bounds[0], bounds[1])
 
