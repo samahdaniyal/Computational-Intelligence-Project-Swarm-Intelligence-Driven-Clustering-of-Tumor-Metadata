@@ -45,7 +45,7 @@ class PSOClustering:
         for i in range(min(n_particles, self.k)):
             self.particles[i].position = seed.copy()
 
-    def optimize(self, patience= 10):
+    def optimize(self, patience= 20):
         history = []
         no_improve = 0
         for i in range(self.iters):

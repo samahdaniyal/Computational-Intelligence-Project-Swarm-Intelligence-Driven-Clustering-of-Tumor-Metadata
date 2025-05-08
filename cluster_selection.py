@@ -1,20 +1,35 @@
-from sklearn.cluster import KMeans, AgglomerativeClustering
-from evaluation import evaluate_clustering
 import numpy as np
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
 import matplotlib.pyplot as plt
 
-def find_optimal_clusters(X, max_k=10, method='kmeans'):
-    ks, sil, db, ch = [], [], [], []
-    for k in range(2, max_k+1):
-        model = KMeans(n_clusters=k) if method=='kmeans' else AgglomerativeClustering(n_clusters=k)
-        labels = model.fit_predict(X)
-        ks.append(k)
-        sil.append(evaluate_clustering(X,labels)['silhouette'])
-        db.append(evaluate_clustering(X,labels)['davies_bouldin'])
-        ch.append(evaluate_clustering(X,labels)['calinski_harabasz'])
-    plt.plot(ks,sil,label='Silhouette')
-    plt.plot(ks,db,label='DB')
-    plt.plot(ks,ch,label='Calinski-Harabasz')
-    plt.legend(); plt.show()
-    optimal={'silhouette':ks[np.nanargmax(sil)],'davies_bouldin':ks[np.nanargmin(db)],'calinski_harabasz':ks[np.nanargmax(ch)]}
-    return optimal
+def find_optimal_clusters(X, k_range):
+    inertia = []
+    silhouette_scores = []
+    
+    for k in k_range:
+        kmeans = KMeans(n_clusters=k, n_init=10, random_state=42).fit(X)
+        inertia.append(kmeans.inertia_)  # Within-cluster sum of squares
+        silhouette_scores.append(silhouette_score(X, kmeans.labels_))
+    
+    plt.figure(figsize=(8, 6))
+    plt.plot(list(k_range), inertia, 'bo-')
+    plt.xlabel('Number of Clusters (k)')
+    plt.ylabel('Within-Cluster Sum of Squares (Inertia)')
+    plt.title('Elbow Method for Optimal k')
+    plt.grid(True)
+    plt.show()
+
+    plt.figure(figsize=(8, 6))
+    plt.plot(list(k_range), silhouette_scores, 'ro-')
+    plt.xlabel('Number of Clusters (k)')
+    plt.ylabel('Average Silhouette Score')
+    plt.title('Silhouette Analysis for Optimal k')
+    plt.grid(True)
+    plt.show()
+
+    elbow_k = k_range[np.argmin(np.diff(inertia))] if len(inertia) > 1 else k_range[0]
+    silhouette_k = k_range[np.argmax(silhouette_scores)]
+    print(f"[ClusterSelection] Elbow Method suggests optimal k={elbow_k}")
+    print(f"[ClusterSelection] Silhouette Analysis suggests optimal k={silhouette_k}")
+    return max(elbow_k, silhouette_k)  # Use the higher of the two for a conservative estimate

@@ -22,7 +22,7 @@ class Ant:
         return labels, cost
 
 class AntColonyClustering:
-    def __init__(self, X, n_clusters, n_ants=20, iters=50, alpha_start=1.0, alpha_end=1.0, beta_start=2.0, beta_end=2.0, rho=0.1, Q=1.0):
+    def __init__(self, X, n_clusters, n_ants=30, iters=40, alpha_start=1.0, alpha_end=1.0, beta_start=2.0, beta_end=2.0, rho=0.1, Q=1.0):
         self.X, self.k = X, n_clusters
         self.n = X.shape[0]
         self.alpha_start, self.alpha_end = alpha_start, alpha_end

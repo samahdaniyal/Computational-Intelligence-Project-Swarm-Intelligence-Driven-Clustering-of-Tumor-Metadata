@@ -9,6 +9,7 @@ from clustering_aco import run_aco
 from cluster_selection import find_optimal_clusters
 from visualize import plot_clustering_2d, plot_silhouette, plot_radar_chart, plot_cluster_distribution, plot_cluster_centers_heatmap, plot_convergence
 import time
+import matplotlib.pyplot as plt
 
 # load data:
 def load_data(path: str) -> pd.DataFrame:
@@ -49,27 +50,34 @@ def compare_methods(X, k, true_labels=None):
         results[name]=out[-1]
     return results, perf, labels, conv
 
-# main:
-def main(path,cat_cols,num_cols,find_k=False):
-    df=load_data(path)
-    X,enc,scaler,_=preprocess_data(df,cat_cols,num_cols)
-    if find_k: print(find_optimal_clusters(X))
-    res,perf,labels,conv=compare_methods(X,5)
+def main(path, cat_cols, num_cols, find_k=False):
+    df = load_data(path)
+    X, enc, scaler, _ = preprocess_data(df, cat_cols, num_cols)
+    
+    if find_k:
+        k_range = range(2, 11)  
+        optimal_k = find_optimal_clusters(X, k_range)
+        print(f"[Main] Selected optimal k={optimal_k}")
+    else:
+        optimal_k = 5  # Default k if find_k = False
+
+    res, perf, labels, conv = compare_methods(X, optimal_k)
     print(res)
+    
     plot_clustering_2d(X,labels,'pca')
     plot_clustering_2d(X,labels,'tsne')
     plot_silhouette(X,labels)
     plot_radar_chart(res)
     plot_cluster_distribution(labels)
+    
     for name,h in conv.items():
         if h: plot_convergence(h,name)
     plot_cluster_centers_heatmap(X,labels)
 
-
 if __name__ == '__main__':
     main(
-        path=r"CI Project\sample.tsv",
+        path=r"C:\Users\User\Documents\GitHub\CI Project\sample.tsv",
         cat_cols=['samples.biospecimen_anatomic_site', 'samples.composition','samples.tumor_descriptor'],
         num_cols=[],
-        find_k=False
+        find_k=True
     )
